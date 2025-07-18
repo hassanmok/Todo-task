@@ -86,7 +86,7 @@ export default function All() {
   let [allItem, setAllItem] = useState({});
 
   function showeditinput(item) {
-    setDis3("flex");
+    setDis3("black");
     setAllItem(item);
     setInputdata2(item.title);
     setInputdata3(item.detalis);
@@ -241,16 +241,14 @@ export default function All() {
               style={{ border: "1px solid grey" }}
               label="غير منجز"
             />
-              <BottomNavigationAction
-                style={{ border: "1px solid grey" }}
-                label="منجز"
-              >
-            <Link to={"/done"}>
-
-            </Link>
-              </BottomNavigationAction>
+            <BottomNavigationAction
+              style={{ border: "1px solid grey" }}
+              label="منجز"
+            >
+              <Link to={"/done"}></Link>
+            </BottomNavigationAction>
             <Routes>
-              <Route path="/done" element={<Done item = {data} />} />
+              <Route path="/done" element={<Done item={data} />} />
             </Routes>
             <BottomNavigationAction
               style={{ border: "1px solid grey", fontSize: "2px" }}
