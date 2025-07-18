@@ -86,7 +86,7 @@ export default function All() {
   let [allItem, setAllItem] = useState({});
 
   function showeditinput(item) {
-    setDis3("black");
+    setDis3("flex");
     setAllItem(item);
     setInputdata2(item.title);
     setInputdata3(item.detalis);
@@ -128,13 +128,15 @@ export default function All() {
       <div
         style={{
           display: dis3,
-          marginLeft: "25%",
-          marginRight: "25%",
+          justifyContent: "center",
+          flexDirection: "column",
           position: "relative ",
           top: "100px",
+          marginLeft: "25%",
+          marginRight: "25%"
         }}
       >
-        <TextField
+        <TextField style={{marginBottom: "10px"}}
           id="outlined-helperText"
           label=" تعديل عنوان المهمة"
           value={inputdata2}
@@ -142,6 +144,7 @@ export default function All() {
             setInputdata2(e.target.value);
           }}
         />
+        <br></br>
         <TextField
           id="outlined-helperText"
           label=" تعديل عنوان التفاصيل"
@@ -150,7 +153,8 @@ export default function All() {
             setInputdata3(e.target.value);
           }}
         />
-        <Button
+        <br></br>
+        <Button style={{marginLeft: "25%", marginRight: "25%"}}
           variant="outlined"
           onClick={() => {
             editinput(allItem.id, inputdata2, inputdata3);
