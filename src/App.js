@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { places } from "./data.js";
+import { getImageUrl } from "./utils.js";
+import { useContext } from "react";
+import { imageData, placeContext } from "./Context/ImageContext.js";
+import { Route, Routes } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Submit from "./Submit.js";
+import { listPost } from "./Context/postContext.js";
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import SvgIcon from '@mui/material/SvgIcon';
+import DisabledAccordion from "./Select.js";
+import Container from '@mui/material/Container';
+import All from "./All.js";
+import NotDone from "./NotDone.js";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+
+  return(
+    <>
+    <All></All>
+    </>
+    
+  )
 }
-
-export default App;
