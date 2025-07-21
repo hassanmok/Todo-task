@@ -446,6 +446,7 @@ export default function All() {
             </Button>
           </div>
         </Box>
+        <p style={{display: "flex" , justifyContent: "end"}}>جميع الحقوق محفوظة لدى حسن عبدالهادي الكبيييييييير</p>
       </Container>
     </>
   );
