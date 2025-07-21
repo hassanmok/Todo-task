@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { ToDoList } from "./Context/ToDoListContext";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
@@ -23,22 +22,23 @@ import Alert from "@mui/material/Alert";
 import { Details, Margin } from "@mui/icons-material";
 import Done from "./Done";
 import { Link, Route, Routes } from "react-router-dom";
+import { ToDoList } from "./Context/ToDoListContext";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
-let missions = [{ id: 0 }];
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
 export default function All() {
   const [effect, setEffect] = useState(0);
   const [value, setValue] = useState(0);
   const [inputdata, setInputdata] = useState("");
   const [inputdata4, setInputdata4] = useState("");
-  const [data, setData] = useState([
-    {
-      id: 0,
-      title: "اليوم الاول",
-      detalis: "نبذة بسيطة",
-      isDone: false,
-      isDelete: false,
-    },
-  ]);
+  const { data, setData } = useContext(ToDoList);
+
   const [count, setCount] = useState(1);
   function createData() {
     console.log("mowwwwwwwwwwwww");
@@ -63,26 +63,15 @@ export default function All() {
   let [dis2, setDis2] = useState("none");
   let [dis3, setDis3] = useState("none");
   let [id_d, setId_d] = useState();
-  function deleteItem(id) {
-    setDis2("flex");
-    setId_d(id);
-    // console.log(id)
-    // const newdata = data.filter((d) => {
-    //   return d.id !== id;
-    // });
-    // setData(newdata);
-  }
 
-  function yes_del(id) {
+  function yes_del() {
     const newdata = data.filter((d) => {
-      return d.id !== id;
+      return d.id !== id_d;
     });
     setData(newdata);
-    setDis2("none");
+    setOpen(false);
   }
-  function no_del() {
-    setDis2("none");
-  }
+
   let [allItem, setAllItem] = useState({});
 
   function showeditinput(item) {
@@ -111,21 +100,56 @@ export default function All() {
           : item
       )
     );
-    setDis3("none");
+    setOpenEdit(false);
     setInputdata2("");
     setInputdata3("");
   }
 
   function Doneitem(item) {
     setData((prevData) =>
-      prevData.map((i) => (item.id === i.id ? { ...i, isDone: true } : i))
+      prevData.map((i) =>
+        item.id === i.id
+          ? { ...i, isDone: item.isDone == false ? true : false }
+          : i
+      )
     );
     data.map((prevData) => console.log(prevData));
   }
 
+  const [open, setOpen] = useState(false);
+
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleClickOpenEdit = (item) => {
+    setOpenEdit(true);
+    setAllItem(item);
+    setInputdata2(item.title);
+    setInputdata3(item.detalis);
+  };
+
+  const handleClickOpen = (id) => {
+    setId_d(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
+  const [alignment, setAlignment] = useState('web');
+
+  const handleChange = (event, newAlignment) => {
+    setAlignment(newAlignment);
+  };
+
   return (
     <>
-      <div
+      {/* <div
         style={{
           display: dis3,
           justifyContent: "center",
@@ -133,10 +157,11 @@ export default function All() {
           position: "relative ",
           top: "100px",
           marginLeft: "25%",
-          marginRight: "25%"
+          marginRight: "25%",
         }}
       >
-        <TextField style={{marginBottom: "10px"}}
+        <TextField
+          style={{ marginBottom: "10px" }}
           id="outlined-helperText"
           label=" تعديل عنوان المهمة"
           value={inputdata2}
@@ -154,7 +179,8 @@ export default function All() {
           }}
         />
         <br></br>
-        <Button style={{marginLeft: "25%", marginRight: "25%"}}
+        <Button
+          style={{ marginLeft: "25%", marginRight: "25%" }}
           variant="outlined"
           onClick={() => {
             editinput(allItem.id, inputdata2, inputdata3);
@@ -162,31 +188,75 @@ export default function All() {
         >
           تم
         </Button>
-      </div>
-      <Alert
-        severity="error"
-        style={{
-          display: dis2,
-          flexDirection: "column",
-          marginLeft: "25%",
-          marginRight: "25%",
-          position: "relative ",
-          top: "100px",
-        }}
+      </div> */}
+
+      {/* edit item  or not */}
+
+      <Dialog
+        style={{ direction: "rtl" }}
+        open={openEdit}
+        onClose={handleCloseEdit}
       >
-        <h5> هل تريد فعلا الحذف ؟</h5>
-        <Button
-          onClick={() => {
-            yes_del(id_d);
-          }}
-          variant="outlined"
-        >
-          نعم
-        </Button>
-        <Button variant="outlined" onClick={no_del}>
-          لا
-        </Button>
-      </Alert>
+        <DialogTitle>تعديل المهمة</DialogTitle>
+        <DialogContent sx={{ paddingBottom: 0 }}>
+          <DialogContentText>
+            <h4>عدل معلومات المهمة</h4>
+          </DialogContentText>
+
+          <TextField
+            style={{ marginBottom: "10px" }}
+            id="outlined-helperText"
+            label=" تعديل عنوان المهمة"
+            value={inputdata2}
+            onChange={(e) => {
+              setInputdata2(e.target.value);
+            }}
+          />
+          <br></br>
+          <TextField
+            id="outlined-helperText"
+            label=" تعديل عنوان التفاصيل"
+            value={inputdata3}
+            onChange={(e) => {
+              setInputdata3(e.target.value);
+            }}
+          />
+          <DialogActions>
+            <Button onClick={handleCloseEdit}>اغلاق</Button>
+            <Button
+              type="submit"
+              onClick={() => {
+                editinput(allItem.id, inputdata2, inputdata3);
+              }}
+            >
+              تم
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
+      {/* delete item or not */}
+
+      <Dialog
+        style={{ direction: "rtl" }}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"حذف مهمة"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            هل ترغب حقا في حذف هذه المهمة ؟
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>لا</Button>
+          <Button onClick={yes_del} autoFocus>
+            نعم
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Alert
         style={{
           display: dis,
@@ -233,7 +303,19 @@ export default function All() {
           >
             مهامي
           </h1>
-          <BottomNavigation
+          <hr style={{ border: ".2px solid black" }}></hr>
+          <ToggleButtonGroup style={{display: "flex", justifyContent: "center"}}
+            color="primary"
+            value={alignment}
+            exclusive
+            onChange={handleChange}
+            aria-label="Platform"
+          >
+            <ToggleButton value="web">غير منجز</ToggleButton>
+            <ToggleButton value="android">منجز</ToggleButton>
+            <ToggleButton value="ios">الكل</ToggleButton>
+          </ToggleButtonGroup>
+          {/* <BottomNavigation
             style={{ marginBottom: "20px" }}
             showLabels
             value={value}
@@ -258,69 +340,72 @@ export default function All() {
               style={{ border: "1px solid grey", fontSize: "2px" }}
               label="الكل"
             />
-          </BottomNavigation>
+          </BottomNavigation> */}
 
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
             {data.map((item) => {
-              if (item.isDone == false) {
-                return (
-                  <ListItem
-                    className="mission"
-                    style={{
-                      marginBottom: "20px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      border: "1px solid grey",
-                      backgroundColor: "#3f50b5",
-                      color: "white",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    <div style={{ display: "flex" }}>
-                      <DeleteOutlineRoundedIcon
-                        onClick={() => {
-                          deleteItem(item.id);
-                        }}
-                        style={{
-                          marginRight: "10px",
-                          backgroundColor: "red",
-                          padding: "4px",
-                          fontSize: "30px",
-                          border: "1px solid grey",
-                          borderRadius: "100px",
-                        }}
-                      ></DeleteOutlineRoundedIcon>
-                      <ModeEditRoundedIcon
-                        onClick={() => {
-                          showeditinput(item);
-                        }}
-                        style={{
-                          backgroundColor: "#757ce8",
-                          marginRight: "10px",
-                          padding: "4px",
-                          fontSize: "30px",
-                          border: "1px solid grey",
-                          borderRadius: "100px",
-                        }}
-                      ></ModeEditRoundedIcon>
-                      <CheckCircleOutlineOutlinedIcon
-                        onClick={() => {
-                          Doneitem(item);
-                        }}
-                        style={{
-                          backgroundColor: "green",
-                          fontSize: "30px",
-                          borderRadius: "100px",
-                        }}
-                      ></CheckCircleOutlineOutlinedIcon>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <h1 style={{ fontSize: "20px" }}>{item.title}</h1>
-                      <h1 style={{ fontSize: "16px" }}>{item.detalis}</h1>
-                    </div>
-                  </ListItem>
-                );
-              }
+              return (
+                <ListItem
+                  className="mission"
+                  style={{
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    border: "1px solid grey",
+                    backgroundColor: "#3f50b5",
+                    color: "white",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <div style={{ display: "flex" }}>
+                    <DeleteOutlineRoundedIcon
+                      onClick={
+                        () => {
+                          handleClickOpen(item.id);
+                        }
+                        // deleteItem(item.id);
+                      }
+                      style={{
+                        marginRight: "10px",
+                        backgroundColor: "red",
+                        padding: "4px",
+                        fontSize: "30px",
+                        border: "1px solid grey",
+                        borderRadius: "100px",
+                      }}
+                    ></DeleteOutlineRoundedIcon>
+                    <ModeEditRoundedIcon
+                      onClick={() => {
+                        handleClickOpenEdit(item);
+                      }}
+                      style={{
+                        backgroundColor: "#757ce8",
+                        marginRight: "10px",
+                        padding: "4px",
+                        fontSize: "30px",
+                        border: "1px solid grey",
+                        borderRadius: "100px",
+                      }}
+                    ></ModeEditRoundedIcon>
+                    <CheckCircleOutlineOutlinedIcon
+                      onClick={() => {
+                        Doneitem(item);
+                      }}
+                      style={{
+                        color: "green",
+                        backgroundColor: item.isDone == true ? "#7FFF00" : "#8bc34a",
+                        fontSize: "30px",
+                        borderRadius: "100px",
+                        padding: "0px"
+                      }}
+                    ></CheckCircleOutlineOutlinedIcon>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <h1 style={{ fontSize: "20px" }}>{item.title}</h1>
+                    <h1 style={{ fontSize: "16px" }}>{item.detalis}</h1>
+                  </div>
+                </ListItem>
+              );
             })}
           </List>
           <div
