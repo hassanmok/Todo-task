@@ -19,6 +19,18 @@ import { ToDoList } from "./Context/ToDoListContext.js";
 
 export default function App() {
 
+  // const [data, setData] = useState(() => {
+  //   // 🔹 Load from localStorage on first render
+  //   const saved = localStorage.getItem("todos");
+  //   return saved ? JSON.parse(saved) : [{
+  //         id: 0,
+  //         title: "اليوم الاول",
+  //         detalis: "نبذة بسيطة",
+  //         isDone: false,
+  //         isDelete: false,
+  //       }];
+  // });
+
   const [data, setData] = useState([
     {
       id: 0,
@@ -28,6 +40,11 @@ export default function App() {
       isDelete: false,
     },
   ]);
+  const saved = localStorage.getItem("todos");
+  if(saved == null){
+    localStorage.setItem("todos", JSON.stringify(data))
+  }
+
   return (
     <>
       <ToDoList value={{data, setData}}>

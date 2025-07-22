@@ -41,6 +41,8 @@ export default function All() {
   const { data, setData } = useContext(ToDoList);
   const [diplayToDo, setDisplayToDo] = useState("all")
 
+  
+
   const completed = data.filter((item)=>{
     return item.isDone
   })
