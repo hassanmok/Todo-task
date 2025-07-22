@@ -175,11 +175,13 @@ export default function All() {
     diplayData = nonCompleted;
   }
 
-  function wrapText(text, maxLength = 10) {
+  function wrapText(text) {
     if (!text) return [];
     const lines = [];
-    for (let i = 0; i < text.length; i += maxLength) {
-      lines.push(text.slice(i, i + maxLength));
+    for (let i = 0; i < text.length; i += 20) {
+      const part = text.slice(i, i + 20);
+      const withDash = part.length === 20 ? "-" + part : part;
+      lines.push(withDash);
     }
     return lines;
   }
