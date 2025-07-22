@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -29,9 +29,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import {v4 as uuidv4} from 'uuid';
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { v4 as uuidv4 } from "uuid";
 
 export default function All() {
   const [effect, setEffect] = useState(0);
@@ -39,38 +39,33 @@ export default function All() {
   const [inputdata, setInputdata] = useState("");
   const [inputdata4, setInputdata4] = useState("");
   const { data, setData } = useContext(ToDoList);
-  const [diplayToDo, setDisplayToDo] = useState("all")
+  const [diplayToDo, setDisplayToDo] = useState("all");
 
-  
-
-  const completed = data.filter((item)=>{
-    return item.isDone
-  })
-  const nonCompleted = data.filter((item)=>{
-    return !item.isDone
-  })
+  const completed = data.filter((item) => {
+    return item.isDone;
+  });
+  const nonCompleted = data.filter((item) => {
+    return !item.isDone;
+  });
   let myuuid = uuidv4();
   function createData() {
-
     console.log("mowwwwwwwwwwwww");
-    if (inputdata == "" || inputdata4 == "") {
-      setDis("flex");
+    if (inputdata === "") {
+      setOpenAlart("flex");
     } else {
       const newTodo = {
         id: myuuid,
-          title: inputdata,
-          detalis: inputdata4,
-          isDone: false
-      }
+        title: inputdata,
+        detalis: inputdata4,
+        isDone: false,
+      };
       const updateTodo = [...data, newTodo];
 
       setData(updateTodo);
       setDis("none");
-      localStorage.setItem("todos", JSON.stringify(updateTodo))
+      localStorage.setItem("todos", JSON.stringify(updateTodo));
     }
   }
-
-  
 
   let [dis, setDis] = useState("none");
   let [id_d, setId_d] = useState();
@@ -80,12 +75,11 @@ export default function All() {
       return d.id !== id_d;
     });
     setData(newdata);
-    localStorage.setItem("todos", JSON.stringify(newdata))
+    localStorage.setItem("todos", JSON.stringify(newdata));
     setOpen(false);
   }
 
   let [allItem, setAllItem] = useState({});
-
 
   let [inputdata2, setInputdata2] = useState("");
   let [inputdata3, setInputdata3] = useState("");
@@ -94,39 +88,43 @@ export default function All() {
     console.log("the id: ", id);
     console.log("new title: ", newTitle);
     console.log("new title: ", newDetalis);
-    
-    const newEdit = data.map((item)=>{
-      if(item.id == id){
-        return {...item, title: newTitle == "" ? item.title : newTitle,
-          detalis: newDetalis == "" ? item.detalis : newDetalis,}
-      } else{
-        return item
+
+    const newEdit = data.map((item) => {
+      if (item.id == id) {
+        return {
+          ...item,
+          title: newTitle == "" ? item.title : newTitle,
+          detalis: newDetalis == "" ? item.detalis : newDetalis,
+        };
+      } else {
+        return item;
       }
-    })
-    
-    setData(newEdit)
-    
-    localStorage.setItem("todos", JSON.stringify(newEdit))
-  
+    });
+
+    setData(newEdit);
+
+    localStorage.setItem("todos", JSON.stringify(newEdit));
+
     setOpenEdit(false);
     setInputdata2("");
     setInputdata3("");
   }
 
   function Doneitem(item) {
-    const dataDone = data.map((i)=>{
-      if(item.id == i.id){
-        return { ...i, isDone: item.isDone == false ? true : false }
+    const dataDone = data.map((i) => {
+      if (item.id == i.id) {
+        return { ...i, isDone: item.isDone == false ? true : false };
       } else {
-        return i
+        return i;
       }
-    })
-    setData(dataDone)
-    localStorage.setItem("todos", JSON.stringify(dataDone))
+    });
+    setData(dataDone);
+    localStorage.setItem("todos", JSON.stringify(dataDone));
     data.map((prevData) => console.log(prevData));
   }
 
   const [open, setOpen] = useState(false);
+  const [openAlart, setOpenAlart] = useState(false);
 
   const [openEdit, setOpenEdit] = useState(false);
 
@@ -150,33 +148,44 @@ export default function All() {
     setOpen(false);
   };
 
+  const handleCloseAlart = () => {
+    setOpenAlart(false);
+  };
 
-  const [alignment, setAlignment] = useState('web');
+  const [alignment, setAlignment] = useState("web");
 
   const handleChange = (event, newAlignment) => {
     setAlignment(newAlignment);
   };
 
-  useEffect(()=>{
-    const newSetupdate = JSON.parse(localStorage.getItem("todos"))
+  useEffect(() => {
+    const newSetupdate = JSON.parse(localStorage.getItem("todos"));
     setData(newSetupdate);
-  },[])
-  
-  function handleChangeDisplayToDo(e){
-    setDisplayToDo(e.target.value)
+  }, []);
+
+  function handleChangeDisplayToDo(e) {
+    setDisplayToDo(e.target.value);
   }
-  let diplayData = data
-  if(diplayToDo == "all"){
-    diplayData = data
-  }else if(diplayToDo == "completed"){
-    diplayData = completed
-  } else if(diplayToDo == "non-completed"){
-    diplayData = nonCompleted
+  let diplayData = data;
+  if (diplayToDo == "all") {
+    diplayData = data;
+  } else if (diplayToDo == "completed") {
+    diplayData = completed;
+  } else if (diplayToDo == "non-completed") {
+    diplayData = nonCompleted;
+  }
+
+  function wrapText(text, maxLength = 10) {
+    if (!text) return [];
+    const lines = [];
+    for (let i = 0; i < text.length; i += maxLength) {
+      lines.push(text.slice(i, i + maxLength));
+    }
+    return lines;
   }
 
   return (
     <>
-
       <Dialog
         style={{ direction: "rtl" }}
         open={openEdit}
@@ -242,7 +251,26 @@ export default function All() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Alert
+
+      {/* show aleart */}
+      <Dialog
+        style={{ direction: "rtl" }}
+        open={openAlart}
+        onClose={handleCloseAlart}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"تنبيه"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            يجب على الاقل ادخال عنوان مهمة
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAlart}>اغلاق</Button>
+        </DialogActions>
+      </Dialog>
+      {/* <Alert
         style={{
           display: dis,
           marginLeft: "25%",
@@ -263,10 +291,11 @@ export default function All() {
           </Button>
         }
       >
+        
         {inputdata == ""
           ? "يجب عليك ادخال عنوان المهمة"
-          : " يجب عليك ادخال تفاصيل المهمة"}
-      </Alert>
+          : setDis("none")}
+      </Alert> */}
 
       <Container maxWidth="sm">
         <Box
@@ -289,7 +318,8 @@ export default function All() {
             مهامي
           </h1>
           <hr style={{ border: ".2px solid black" }}></hr>
-          <ToggleButtonGroup style={{display: "flex", justifyContent: "center"}}
+          <ToggleButtonGroup
+            style={{ display: "flex", justifyContent: "center" }}
             color="primary"
             value={diplayToDo}
             exclusive
@@ -302,10 +332,10 @@ export default function All() {
           </ToggleButtonGroup>
 
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-            
             {diplayData.map((item) => {
               return (
-                <ListItem key={item.id}
+                <ListItem
+                  key={item.id}
                   className="mission"
                   style={{
                     marginBottom: "20px",
@@ -353,16 +383,30 @@ export default function All() {
                       }}
                       style={{
                         color: "green",
-                        backgroundColor: item.isDone == true ? "#7FFF00" : "#8bc34a",
+                        backgroundColor:
+                          item.isDone == true ? "#7FFF00" : "#8bc34a",
                         fontSize: "30px",
                         borderRadius: "100px",
-                        padding: "0px"
+                        padding: "0px",
                       }}
                     ></CheckCircleOutlineOutlinedIcon>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <h1 style={{ fontSize: "20px" }}>{item.title}</h1>
-                    <h1 style={{ fontSize: "16px" }}>{item.detalis}</h1>
+                    {/* <h1 style={{ fontSize: "20px" }}>{item.title}</h1> */}
+                    {/* <h1 style={{ fontSize: "16px" }}>{item.detalis}</h1> */}
+                    {wrapText(item.title).map((line, index) => (
+                      <h1 key={index} style={{ fontSize: "20px", margin: 0 }}>
+                        {line}
+                      </h1>
+                    ))}
+                    {wrapText(item.detalis).map((line, index) => (
+                      <h1
+                        key={`d-${index}`}
+                        style={{ fontSize: "16px", margin: 0 }}
+                      >
+                        {line}
+                      </h1>
+                    ))}
                   </div>
                 </ListItem>
               );
@@ -406,7 +450,9 @@ export default function All() {
             </Button>
           </div>
         </Box>
-        <p style={{display: "flex" , justifyContent: "end"}}>جميع الحقوق محفوظة لدى حسن عبدالهادي الكبيييييييير</p>
+        <p style={{ display: "flex", justifyContent: "end" }}>
+          جميع الحقوق محفوظة لدى حسن عبدالهادي الكبيييييييير
+        </p>
       </Container>
     </>
   );
