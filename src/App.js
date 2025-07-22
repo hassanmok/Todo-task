@@ -28,7 +28,6 @@ export default function App() {
       isDelete: false,
     },
   ]);
-
   return (
     <>
       <ToDoList value={{data, setData}}>

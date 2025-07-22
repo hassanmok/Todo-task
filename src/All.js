@@ -31,6 +31,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import {v4 as uuidv4} from 'uuid';
 
 export default function All() {
   const [effect, setEffect] = useState(0);
@@ -38,30 +39,38 @@ export default function All() {
   const [inputdata, setInputdata] = useState("");
   const [inputdata4, setInputdata4] = useState("");
   const { data, setData } = useContext(ToDoList);
+  const [diplayToDo, setDisplayToDo] = useState("all")
 
-  const [count, setCount] = useState(1);
+  const completed = data.filter((item)=>{
+    return item.isDone
+  })
+  const nonCompleted = data.filter((item)=>{
+    return !item.isDone
+  })
+  let myuuid = uuidv4();
   function createData() {
+
     console.log("mowwwwwwwwwwwww");
     if (inputdata == "" || inputdata4 == "") {
       setDis("flex");
     } else {
-      setData([
-        ...data,
-        {
-          id: count,
+      const newTodo = {
+        id: myuuid,
           title: inputdata,
           detalis: inputdata4,
-          isDone: false,
-          isDelete: false,
-        },
-      ]);
-      setCount(count + 1);
+          isDone: false
+      }
+      const updateTodo = [...data, newTodo];
+
+      setData(updateTodo);
       setDis("none");
+      localStorage.setItem("todos", JSON.stringify(updateTodo))
     }
   }
+
+  
+
   let [dis, setDis] = useState("none");
-  let [dis2, setDis2] = useState("none");
-  let [dis3, setDis3] = useState("none");
   let [id_d, setId_d] = useState();
 
   function yes_del() {
@@ -69,18 +78,12 @@ export default function All() {
       return d.id !== id_d;
     });
     setData(newdata);
+    localStorage.setItem("todos", JSON.stringify(newdata))
     setOpen(false);
   }
 
   let [allItem, setAllItem] = useState({});
 
-  function showeditinput(item) {
-    setDis3("flex");
-    setAllItem(item);
-    setInputdata2(item.title);
-    setInputdata3(item.detalis);
-    console.log("itemmmmmmmm: ", item);
-  }
 
   let [inputdata2, setInputdata2] = useState("");
   let [inputdata3, setInputdata3] = useState("");
@@ -89,30 +92,35 @@ export default function All() {
     console.log("the id: ", id);
     console.log("new title: ", newTitle);
     console.log("new title: ", newDetalis);
-    setData((prevData) =>
-      prevData.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              title: newTitle == "" ? item.title : newTitle,
-              detalis: newDetalis == "" ? item.detalis : newDetalis,
-            }
-          : item
-      )
-    );
+    
+    const newEdit = data.map((item)=>{
+      if(item.id == id){
+        return {...item, title: newTitle == "" ? item.title : newTitle,
+          detalis: newDetalis == "" ? item.detalis : newDetalis,}
+      } else{
+        return item
+      }
+    })
+    
+    setData(newEdit)
+    
+    localStorage.setItem("todos", JSON.stringify(newEdit))
+  
     setOpenEdit(false);
     setInputdata2("");
     setInputdata3("");
   }
 
   function Doneitem(item) {
-    setData((prevData) =>
-      prevData.map((i) =>
-        item.id === i.id
-          ? { ...i, isDone: item.isDone == false ? true : false }
-          : i
-      )
-    );
+    const dataDone = data.map((i)=>{
+      if(item.id == i.id){
+        return { ...i, isDone: item.isDone == false ? true : false }
+      } else {
+        return i
+      }
+    })
+    setData(dataDone)
+    localStorage.setItem("todos", JSON.stringify(dataDone))
     data.map((prevData) => console.log(prevData));
   }
 
@@ -147,50 +155,25 @@ export default function All() {
     setAlignment(newAlignment);
   };
 
+  useEffect(()=>{
+    const newSetupdate = JSON.parse(localStorage.getItem("todos"))
+    setData(newSetupdate);
+  },[])
+  
+  function handleChangeDisplayToDo(e){
+    setDisplayToDo(e.target.value)
+  }
+  let diplayData = data
+  if(diplayToDo == "all"){
+    diplayData = data
+  }else if(diplayToDo == "completed"){
+    diplayData = completed
+  } else if(diplayToDo == "non-completed"){
+    diplayData = nonCompleted
+  }
+
   return (
     <>
-      {/* <div
-        style={{
-          display: dis3,
-          justifyContent: "center",
-          flexDirection: "column",
-          position: "relative ",
-          top: "100px",
-          marginLeft: "25%",
-          marginRight: "25%",
-        }}
-      >
-        <TextField
-          style={{ marginBottom: "10px" }}
-          id="outlined-helperText"
-          label=" تعديل عنوان المهمة"
-          value={inputdata2}
-          onChange={(e) => {
-            setInputdata2(e.target.value);
-          }}
-        />
-        <br></br>
-        <TextField
-          id="outlined-helperText"
-          label=" تعديل عنوان التفاصيل"
-          value={inputdata3}
-          onChange={(e) => {
-            setInputdata3(e.target.value);
-          }}
-        />
-        <br></br>
-        <Button
-          style={{ marginLeft: "25%", marginRight: "25%" }}
-          variant="outlined"
-          onClick={() => {
-            editinput(allItem.id, inputdata2, inputdata3);
-          }}
-        >
-          تم
-        </Button>
-      </div> */}
-
-      {/* edit item  or not */}
 
       <Dialog
         style={{ direction: "rtl" }}
@@ -306,46 +289,21 @@ export default function All() {
           <hr style={{ border: ".2px solid black" }}></hr>
           <ToggleButtonGroup style={{display: "flex", justifyContent: "center"}}
             color="primary"
-            value={alignment}
+            value={diplayToDo}
             exclusive
-            onChange={handleChange}
+            onChange={handleChangeDisplayToDo}
             aria-label="Platform"
           >
-            <ToggleButton value="web">غير منجز</ToggleButton>
-            <ToggleButton value="android">منجز</ToggleButton>
-            <ToggleButton value="ios">الكل</ToggleButton>
+            <ToggleButton value="non-completed">غير منجز</ToggleButton>
+            <ToggleButton value="completed">منجز</ToggleButton>
+            <ToggleButton value="all">الكل</ToggleButton>
           </ToggleButtonGroup>
-          {/* <BottomNavigation
-            style={{ marginBottom: "20px" }}
-            showLabels
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue);
-            }}
-          >
-            <BottomNavigationAction
-              style={{ border: "1px solid grey" }}
-              label="غير منجز"
-            />
-            <BottomNavigationAction
-              style={{ border: "1px solid grey" }}
-              label="منجز"
-            >
-              <Link to={"/done"}></Link>
-            </BottomNavigationAction>
-            <Routes>
-              <Route path="/done" element={<Done item={data} />} />
-            </Routes>
-            <BottomNavigationAction
-              style={{ border: "1px solid grey", fontSize: "2px" }}
-              label="الكل"
-            />
-          </BottomNavigation> */}
 
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-            {data.map((item) => {
+            
+            {diplayData.map((item) => {
               return (
-                <ListItem
+                <ListItem key={item.id}
                   className="mission"
                   style={{
                     marginBottom: "20px",
