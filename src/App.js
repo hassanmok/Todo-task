@@ -16,20 +16,10 @@ import Container from "@mui/material/Container";
 import All from "./All.js";
 import NotDone from "./NotDone.js";
 import { ToDoList } from "./Context/ToDoListContext.js";
+import { SnackContext } from "./Context/SnackContext.js";
+import MySnackBar from "./MySnackBar.js";
 
 export default function App() {
-
-  // const [data, setData] = useState(() => {
-  //   // 🔹 Load from localStorage on first render
-  //   const saved = localStorage.getItem("todos");
-  //   return saved ? JSON.parse(saved) : [{
-  //         id: 0,
-  //         title: "اليوم الاول",
-  //         detalis: "نبذة بسيطة",
-  //         isDone: false,
-  //         isDelete: false,
-  //       }];
-  // });
 
   const [data, setData] = useState([
     {
@@ -40,17 +30,26 @@ export default function App() {
       isDelete: false,
     },
   ]);
-  const saved = localStorage.getItem("todos");
-  if(saved == null){
-    localStorage.setItem("todos", JSON.stringify(data))
+  const [openSnack, setOpenSnack] = useState(false);
+  let [titleSnack,setTitlesnack] = useState("")
+  function handleSnack(title){
+    setTitlesnack(title);
+    console.log("titlesnack:", titleSnack)
+    setOpenSnack(true);
+    setTimeout(()=>{
+      setOpenSnack(false);
+  },2000)
   }
 
   return (
     <>
       <ToDoList value={{data, setData}}>
 
-
+      <SnackContext.Provider value={{handleSnack}}>
+      <MySnackBar openSnack = {openSnack} title={titleSnack}></MySnackBar>
       <All></All>
+
+      </SnackContext.Provider>
       </ToDoList>
     </>
   );

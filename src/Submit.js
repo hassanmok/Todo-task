@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./Submit.css";
 import { Link } from "react-router-dom";
-import Done from "./Done";
 import Component from "./Component";
 import { useParams } from "react-router-dom";
 import { LoanFormContext } from "./Context/LoanFormContext";
@@ -140,7 +139,7 @@ export default function Submit() {
           backgroundColor: "rgba(0,0,0,0.35)",
         }}
       >
-        <Done error={errortype} />
+      
       </div>
     </div>
   );

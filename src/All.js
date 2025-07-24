@@ -20,8 +20,6 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { Details, Margin } from "@mui/icons-material";
-import Done from "./Done";
-import { Link, Route, Routes } from "react-router-dom";
 import { ToDoList } from "./Context/ToDoListContext";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -32,6 +30,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { v4 as uuidv4 } from "uuid";
+import MySnackBar from "./MySnackBar"
+import { SnackContext } from "./Context/SnackContext";
 
 export default function All() {
   const [effect, setEffect] = useState(0);
@@ -40,7 +40,8 @@ export default function All() {
   const [inputdata4, setInputdata4] = useState("");
   const { data, setData } = useContext(ToDoList);
   const [diplayToDo, setDisplayToDo] = useState("all");
-
+  const { handleSnack } = useContext(SnackContext);
+  
   const completed = data.filter((item) => {
     return item.isDone;
   });
@@ -62,12 +63,15 @@ export default function All() {
       const updateTodo = [...data, newTodo];
 
       setData(updateTodo);
-      setDis("none");
+      setInputdata("")
+      setInputdata4("")
       localStorage.setItem("todos", JSON.stringify(updateTodo));
+      
+      handleSnack("تم الاضافة")
+      
     }
   }
 
-  let [dis, setDis] = useState("none");
   let [id_d, setId_d] = useState();
 
   function yes_del() {
@@ -77,6 +81,8 @@ export default function All() {
     setData(newdata);
     localStorage.setItem("todos", JSON.stringify(newdata));
     setOpen(false);
+    handleSnack("تم الحذف")
+  
   }
 
   let [allItem, setAllItem] = useState({});
@@ -101,6 +107,7 @@ export default function All() {
       }
     });
 
+    handleSnack("تم التعديل")
     setData(newEdit);
 
     localStorage.setItem("todos", JSON.stringify(newEdit));
@@ -159,7 +166,7 @@ export default function All() {
   };
 
   useEffect(() => {
-    const newSetupdate = JSON.parse(localStorage.getItem("todos"));
+    const newSetupdate = JSON.parse(localStorage.getItem("todos")) ?? [];
     setData(newSetupdate);
   }, []);
 
@@ -184,6 +191,13 @@ export default function All() {
       lines.push(withDash);
     }
     return lines;
+  }
+
+  function handleClearAll(){
+    const newdata = [];
+    setData(newdata);
+    localStorage.setItem("todos", JSON.stringify(newdata))
+    handleSnack("تم حذف الكل")
   }
 
   return (
@@ -272,39 +286,14 @@ export default function All() {
           <Button onClick={handleCloseAlart}>اغلاق</Button>
         </DialogActions>
       </Dialog>
-      {/* <Alert
-        style={{
-          display: dis,
-          marginLeft: "25%",
-          marginRight: "25%",
-          position: "relative ",
-          top: "100px",
-        }}
-        severity="warning"
-        action={
-          <Button
-            onClick={() => {
-              setDis("none");
-            }}
-            color="inherit"
-            size="small"
-          >
-            اغلاق
-          </Button>
-        }
-      >
-        
-        {inputdata == ""
-          ? "يجب عليك ادخال عنوان المهمة"
-          : setDis("none")}
-      </Alert> */}
+      
 
       <Container maxWidth="sm">
         <Box
           component="section"
           sx={{
-            mt: 20,
-            mb: 20,
+            mt: 10,
+            mb: 10,
             p: 2,
             border: "1px solid grey",
             borderRadius: "4px",
@@ -332,8 +321,9 @@ export default function All() {
             <ToggleButton value="completed">منجز</ToggleButton>
             <ToggleButton value="all">الكل</ToggleButton>
           </ToggleButtonGroup>
-
-          <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+          <Button disabled={data.length >= 1 ? false : true} onClick={handleClearAll} variant="outlined" style={{marginBottom:"4px"}}>حذف الكل</Button>
+            
+          <List sx={{ width: "100%", bgcolor: "background.paper" }} style={{maxHeight: "300px", overflowY: "scroll", overflowX: "none"}}>
             {diplayData.map((item) => {
               return (
                 <ListItem
@@ -397,10 +387,11 @@ export default function All() {
                     {/* <h1 style={{ fontSize: "20px" }}>{item.title}</h1> */}
                     {/* <h1 style={{ fontSize: "16px" }}>{item.detalis}</h1> */}
                     {wrapText(item.title).map((line, index) => (
-                      <h1 key={index} style={{ fontSize: "20px", margin: 0 }}>
+                      <h1 key={index} style={{ fontSize: "20px", margin: 0, textDecoration: item.isDone ? "line-through" : ""}}>
                         {line}
                       </h1>
                     ))}
+         
                     {wrapText(item.detalis).map((line, index) => (
                       <h1
                         key={`d-${index}`}
@@ -427,7 +418,7 @@ export default function All() {
                 onChange={(e) => {
                   setInputdata(e.target.value);
                 }}
-                style={{ width: "100%", marginBottom: "6px" }}
+                style={{ width: "100%", marginBottom: "6px",marginTop: "10px" }}
                 id="outlined-basic"
                 label="عنوان مهمة"
                 variant="outlined"
